@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:src="@drawable/alerts_and_states_airplane_mode_on"
+        android:paddingRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="30dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Route 111"
+        android:id="@+id/route_nameTXT"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imageView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Railways-Ngong Road-Karen-Ngong"
+        android:id="@+id/route_descTXT"
+        android:layout_below="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView" />
+</RelativeLayout>
