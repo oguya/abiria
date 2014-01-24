@@ -17,22 +17,16 @@ public class DBUtils {
 
     private final String APP_TAG = "DBUtils";
 
-    public void copyDB(InputStream inputStream, String DBDir, String DBPath) throws IOException {
-        File db_file = new File(DBPath);
+    public void copyDB(InputStream inputStream, OutputStream outputStream) throws IOException{
+        //copy 1kb at a time
+        byte[] buffer = new byte[1024];
+        int length;
 
-        if(prepDBFolder(DBDir) && db_file.isFile()){
-            byte[] buffer = new byte[1024];
-            int length;
-            OutputStream outputStream = new FileOutputStream(DBPath);
-            while ((length = inputStream.read(buffer)) > 0){
-                outputStream.write(buffer, 0, length);
-            }
-            inputStream.close();
-            outputStream.close();
-            Log.i(APP_TAG, "Successfully copied DB to "+DBDir+" Path: "+DBPath);
-        }else{
-            Log.i(APP_TAG, "DB File: "+DBPath+" already exits!");
+        while( (length = inputStream.read(buffer)) > 0 ){
+            outputStream.write(buffer, 0, length);
         }
+        inputStream.close();
+        outputStream.close();
     }
 
     //prep db folders
@@ -45,7 +39,7 @@ public class DBUtils {
             status = true;
             Log.i(APP_TAG, "created DB Dir: "+DBDir);
         }else{
-            status = false;
+            status = true;
             Log.i(APP_TAG, "DB Dir: "+DBDir+" exist!");
         }
         return status;
