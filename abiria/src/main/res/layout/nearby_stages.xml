@@ -3,8 +3,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ff5aff00">
+    android:layout_height="match_parent">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,6 +11,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/nearby_stages"
         android:id="@+id/header"
+        android:typeface="normal"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 

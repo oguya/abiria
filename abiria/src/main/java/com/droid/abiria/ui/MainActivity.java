@@ -1,6 +1,7 @@
 package com.droid.abiria.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -28,6 +29,7 @@ import com.droid.abiria.adapters.CustomRouteListAdapter;
 import com.droid.abiria.adapters.TabsPagerAdapter;
 import com.droid.abiria.db.DBAdapter;
 import com.droid.abiria.db.Route;
+import com.droid.abiria.location.services.LocationService;
 import com.droid.abiria.utils.DBUtils;
 
 import java.io.File;
@@ -43,7 +45,9 @@ public class MainActivity extends ActionBarActivity {
     private final String DB_NAME = "gtfs.sqlite";
     private final int DELETE_ID = Menu.FIRST+1;
 
+    //saved states
     private final String KEY_LOADER_STATE = "LoadStuff";
+    private final String KEY_SELECTED_NAVIGATION_ITEM = "selected_nav_item";
 
     private SharedPreferences prefs;
     private String EXTERNAL_DB_DIR = "";
@@ -59,14 +63,16 @@ public class MainActivity extends ActionBarActivity {
     private TabsPagerAdapter tabsPagerAdapter;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //get saved instance & load stuff
-        loadStuff = (savedInstanceState == null) ? new LoadStuff(this) :
-                (LoadStuff)savedInstanceState.getSerializable(KEY_LOADER_STATE);
+        loadStuff = new LoadStuff(this);
+//        loadStuff = (savedInstanceState == null) ? new LoadStuff(this) :
+//                (LoadStuff)savedInstanceState.getSerializable(KEY_LOADER_STATE);
 
         prefs = getPreferences(MODE_PRIVATE);
         prefs.getBoolean(PREF_DB_COPIED, false);
@@ -103,6 +109,8 @@ public class MainActivity extends ActionBarActivity {
             actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(tabListener));
         }
 
+        //start location services
+        startService(new Intent(getBaseContext(), LocationService.class));
     }
 
 
@@ -183,13 +191,17 @@ public class MainActivity extends ActionBarActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState){
         Log.i(APP_TAG, "restoring instance state");
         super.onRestoreInstanceState(savedInstanceState);
-        loadStuff = (LoadStuff)savedInstanceState.getSerializable(KEY_LOADER_STATE);
+//        loadStuff = (LoadStuff)savedInstanceState.getSerializable(KEY_LOADER_STATE);
+        if(savedInstanceState.containsKey(KEY_SELECTED_NAVIGATION_ITEM)){
+            actionBar.setSelectedNavigationItem(savedInstanceState.getInt(KEY_SELECTED_NAVIGATION_ITEM));
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable(KEY_LOADER_STATE, loadStuff);
+//        outState.putSerializable(KEY_LOADER_STATE, loadStuff);
+        outState.putInt(KEY_SELECTED_NAVIGATION_ITEM, actionBar.getSelectedNavigationIndex());
         saveState();
     }
 
@@ -218,7 +230,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class LoadStuff implements Serializable {
+    public class LoadStuff {
         private Context context;
 
         public LoadStuff(Context context){

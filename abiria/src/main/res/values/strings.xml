@@ -9,11 +9,11 @@
     <string name="menu_delete">Delete route</string>
 
     <!--near by stages-->
-    <string name="nearby_stages">Nearby stages</string>
+    <string name="nearby_stages">Select a nearby stage</string>
 
     <!--services-->
-    <string name="SVC_location">Abiria location service</string>
-    <string name="SVC_location_procName">Abiria</string>
+    <string name="SVC_location">Abiria</string>
+    <string name="SVC_location_proc_name">:Abiria</string>
 
     <!--receivers-->
     <string name="BR_location">Abiria location service</string>
