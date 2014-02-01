@@ -55,9 +55,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //load other stuff
-        loadStuff = new LoadStuff(this);
+        //get saved instance & load stuff
+        loadStuff = (savedInstanceState == null) ? new LoadStuff(this) :
+                (LoadStuff)savedInstanceState.getSerializable(KEY_LOADER_STATE);
+
         prefs = getPreferences(MODE_PRIVATE);
+        prefs.getBoolean(PREF_DB_COPIED, false);
 
         //copy db
         try{
@@ -121,16 +124,18 @@ public class MainActivity extends ActionBarActivity {
         menu.add(0, DELETE_ID, 0, R.string.menu_delete);
     }
 
+    //save stuff
     @Override
     public void onPause(){
-        super.onPause();
         dbAdapter.close();
+        saveState();
+        super.onPause();
     }
 
     @Override
     public void onResume(){
-        super.onResume();
         dbAdapter.open();
+        super.onResume();
     }
 
     //restore saved stuff
@@ -143,9 +148,14 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState){
-        Log.i(APP_TAG, "saving instance state");
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_LOADER_STATE, loadStuff);
+        saveState();
+    }
+
+    //save stuff
+    public void saveState(){
+
     }
 
     @Override

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -21,6 +23,8 @@ public class CustomRouteListAdapter extends ArrayAdapter<Route> {
 
     private Activity context;
     private List<Route> routeList;
+    private int lastPosition = -1;
+
     public CustomRouteListAdapter(Activity _context, List<Route> _routeList){
         super(_context, R.layout.route_row_layout, _routeList);
         this.context = _context;
@@ -47,6 +51,12 @@ public class CustomRouteListAdapter extends ArrayAdapter<Route> {
         viewHolder.route_name.setText("Route "+route_name);
         String route_desc = routeList.get(position).get_route_desc();
         viewHolder.route_desc.setText(route_desc);
+
+        //animate rows
+        Animation animation = AnimationUtils.loadAnimation(this.context, (position > lastPosition) ?
+        R.anim.up_from_bottom : R.anim.down_from_top);
+        rowView.startAnimation(animation);
+        lastPosition = position;
 
         return rowView;
     }
