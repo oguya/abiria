@@ -21,6 +21,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--services-->
+        <service android:name=".location.services.LocationService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/SVC_location"
+            android:process="@string/SVC_location_procName"/>
+
+        <!--receivers-->
+        <receiver android:name=".location.receivers.LocationReceiver"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

@@ -2,6 +2,8 @@ package com.droid.abiria.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 import com.droid.abiria.R;
+import com.droid.abiria.adapters.CustomRouteListAdapter;
+import com.droid.abiria.adapters.TabsPagerAdapter;
 import com.droid.abiria.db.DBAdapter;
 import com.droid.abiria.db.Route;
 import com.droid.abiria.utils.DBUtils;
@@ -29,7 +33,6 @@ import com.droid.abiria.utils.DBUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 
@@ -49,6 +52,12 @@ public class MainActivity extends ActionBarActivity {
     private DBAdapter dbAdapter;
     private ListView listView;
     private List<Route> routeList;
+
+    public static String tabs[] = {"Stages", "Map"};
+    private ActionBar actionBar;
+    private ViewPager viewPager;
+    private TabsPagerAdapter tabsPagerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,28 +87,60 @@ public class MainActivity extends ActionBarActivity {
             Log.i(APP_TAG,"db already copied to:"+DBPath);
         }
 
-        //load db ops
-        dbAdapter = new DBAdapter(this);
-        dbAdapter.open();
+        //init pagers
+        viewPager = (ViewPager)findViewById(R.id.pager);
+        tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        viewPager.setOnPageChangeListener(pageChangeListener);
+        viewPager.setAdapter(tabsPagerAdapter);
 
-        //get all routes
-        routeList = dbAdapter.getAllRoutes();
-        ArrayAdapter<Route> adapter = new ArrayAdapter<Route>(this, android.R.layout.simple_list_item_1, routeList);
-        listView = (ListView)findViewById(android.R.id.list);
-        listView.setAdapter(new CustomRouteListAdapter(MainActivity.this, routeList));
-        listView.setOnItemClickListener(listViewClickListener);
-        registerForContextMenu(listView);
+        //load tabs
+        actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        //add tabs
+        for(String tab_name : tabs){
+            actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(tabListener));
+        }
+
     }
 
-    public OnItemClickListener listViewClickListener = new AdapterView.OnItemClickListener() {
+
+
+    //tabs listener
+    private ActionBar.TabListener tabListener = new ActionBar.TabListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Route route = routeList.get(position);
-            String details = "";
-            details += "trip_ID: "+route.get_trip_id();
-            details += " trip headsign "+route.get_trip_headsign();
-            details += " route long name: "+route.get_route_long_name();
-            Toast.makeText(getApplicationContext(), details, Toast.LENGTH_SHORT).show();
+        public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+            viewPager.setCurrentItem(tab.getPosition());
+        }
+
+        @Override
+        public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+        }
+
+        @Override
+        public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+        }
+    };
+
+    //viewpager listener
+    private ViewPager.OnPageChangeListener  pageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int i, float v, int i2) {
+
+        }
+
+        //make the tab @ pos i be selected
+        @Override
+        public void onPageSelected(int position) {
+            actionBar.setSelectedNavigationItem(position);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int i) {
+
         }
     };
 
@@ -127,16 +168,15 @@ public class MainActivity extends ActionBarActivity {
     //save stuff
     @Override
     public void onPause(){
-        dbAdapter.close();
         saveState();
         super.onPause();
     }
 
     @Override
     public void onResume(){
-        dbAdapter.open();
         super.onResume();
     }
+
 
     //restore saved stuff
     @Override
