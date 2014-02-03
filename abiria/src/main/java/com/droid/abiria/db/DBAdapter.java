@@ -8,9 +8,13 @@ import android.database.sqlite.SQLiteStatement;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.droid.abiria.location.LocationUtils;
+import com.droid.abiria.utils.DBUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +23,7 @@ import java.util.List;
  */
 public class DBAdapter {
     private static final String DATABASE_NAME = "gtfs.sqlite";
+    private static final String DATABASE_DIR = "/data/data/com.droid.abiria/databases/";
     private static final int DATABASE_VERSION = 1;
     private final String LOG_TAG = getClass().getName();
 
@@ -96,9 +101,23 @@ public class DBAdapter {
     }
 
     public static class DBHelper extends SQLiteOpenHelper{
-
+        public DBUtils dbUtils;
         public DBHelper(Context context){
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+            dbUtils = new DBUtils(context);
+            dbUtils.prepDBFolder(DATABASE_DIR);
+            if(!new File(DATABASE_DIR+DATABASE_NAME).exists()){
+                Log.e("DBHelper", "DB doesn't exist!");
+                Toast.makeText(context, "Installing databases...", Toast.LENGTH_LONG).show();
+                try {
+                    dbUtils.copyDB(DATABASE_NAME, DATABASE_DIR);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                Log.d("DBHelper", "DB already exists");
+            }
         }
 
         @Override

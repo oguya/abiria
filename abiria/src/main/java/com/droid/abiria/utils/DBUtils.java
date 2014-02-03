@@ -1,6 +1,9 @@
 package com.droid.abiria.utils;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.droid.abiria.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +19,13 @@ import java.io.OutputStream;
 public class DBUtils {
 
     private final String APP_TAG = "DBUtils";
+    private Context context;
+
+    public DBUtils(Context context){
+        this.context = context;
+    }
+
+    public DBUtils(){}
 
     public void copyDB(InputStream inputStream, OutputStream outputStream) throws IOException{
         //copy 1kb at a time
@@ -27,6 +37,31 @@ public class DBUtils {
         }
         inputStream.close();
         outputStream.close();
+    }
+
+    public void copyDB(String db_name, String db_dir) throws IOException{
+        this.prepDBFolder(db_dir);
+        String db_path = db_dir+db_name;
+        OutputStream dbOutputStream = new FileOutputStream(db_path);
+        InputStream dbInputStream;
+        byte[] buffer = new byte[1024];
+        int length;
+
+        //copy part A
+        dbInputStream = this.context.getResources().openRawResource(R.raw.gtfs_testing_a);
+        while ( (length = dbInputStream.read(buffer)) > 0){
+            dbOutputStream.write(buffer, 0, length);
+        }
+        dbInputStream.close();
+
+        //copy part B
+        dbInputStream = this.context.getResources().openRawResource(R.raw.gtfs_testing_b);
+        while ( (length = dbInputStream.read(buffer)) > 0){
+            dbOutputStream.write(buffer, 0, length);
+        }
+        dbOutputStream.close();
+        dbOutputStream.flush();
+        dbOutputStream.close();
     }
 
     //prep db folders

@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
         String DBPath = getDatabasePath(DB_NAME).getAbsolutePath();
 
         if(!loadStuff.DBExists(DBPath)){
-            loadStuff.loadDB(DBPath);
+//            loadStuff.loadDB(DBPath);
             prefs.edit().putBoolean(PREF_DB_COPIED, true).commit();
             Log.i(APP_TAG,"copying db to "+DBPath);
         }else{
