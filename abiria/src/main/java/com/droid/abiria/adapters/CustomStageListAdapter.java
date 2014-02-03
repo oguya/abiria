@@ -13,6 +13,9 @@ import com.droid.abiria.R;
 import com.droid.abiria.db.Route;
 import com.droid.abiria.db.Stop;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -27,6 +30,10 @@ public class CustomStageListAdapter extends ArrayAdapter<Stop> {
         super(_context, R.layout.stage_row_layout, _stopList);
         this.context = _context;
         this.stopList = _stopList;
+
+        //sort stops using distance
+        Sorter sorter = new Sorter();
+        Collections.sort(this.stopList, sorter);
     }
 
     @Override
@@ -47,8 +54,8 @@ public class CustomStageListAdapter extends ArrayAdapter<Stop> {
         ViewHolder viewHolder = (ViewHolder)rowView.getTag();
         String stage_name = stopList.get(position).get_stop_name();
         viewHolder.stage_name.setText(stage_name);
-        Float distance = stopList.get(position).get_distance();
-        viewHolder.distance.setText("Approximately "+String.valueOf(distance)+" meters away");
+        double distance = Math.ceil(stopList.get(position).get_distance());
+        viewHolder.distance.setText("Approximately "+String.valueOf((int)distance)+" meters away");
 
         //animate rows
         Animation animation = AnimationUtils.loadAnimation(this.context, (position > lastPosition) ?

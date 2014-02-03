@@ -20,6 +20,7 @@
 <resources>
 
     <style name="Theme.Droid" parent="Theme.Base.AppCompat">
+        <!--<item name="windowActionBarOverlay">true</item>-->
         <item name="android:actionBarItemBackground">@drawable/selectable_background_droid</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.Droid</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Droid</item>

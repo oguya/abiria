@@ -1,6 +1,7 @@
 package com.droid.abiria.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentTransaction;
@@ -31,6 +32,8 @@ import com.droid.abiria.db.DBAdapter;
 import com.droid.abiria.db.Route;
 import com.droid.abiria.location.services.LocationService;
 import com.droid.abiria.utils.DBUtils;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -151,6 +154,23 @@ public class MainActivity extends ActionBarActivity {
 
         }
     };
+
+    public void isGooglePlayStoreAvailable(){
+        int resCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if( (resCode ==  ConnectionResult.SERVICE_MISSING) || (resCode == ConnectionResult.SERVICE_DISABLED) || (resCode == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) ){
+            GooglePlayServicesUtil.getErrorDialog(resCode, this, 0, new DialogInterface.OnCancelListener() {
+
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    Log.i(APP_TAG, "Google Play services not available! Quiting");
+                    finish();
+                }
+            });
+        }else{
+            Log.i(APP_TAG,"Google Play services available! ");
+        }
+    }
+
 
     @Override
     public boolean onContextItemSelected(MenuItem item){
